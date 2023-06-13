@@ -68,8 +68,8 @@ def get_paths(date):
         processed_date = datetime.today()
     train_date = processed_date - relativedelta(months=2)
     val_date = processed_date - relativedelta(months=1)
-    train_path = f"./data/fhv_tripdata_{train_date.year}-{str(train_date.month).zfill(2)}.parquet"
-    val_path = f"./data/fhv_tripdata_{val_date.year}-{str(val_date.month).zfill(2)}.parquet"
+    train_path = f"../data/fhv_tripdata_{train_date.year}-{str(train_date.month).zfill(2)}.parquet"
+    val_path = f"../data/fhv_tripdata_{val_date.year}-{str(val_date.month).zfill(2)}.parquet"
     return train_path, val_path
 
 @flow
@@ -97,11 +97,11 @@ def main(date=None):
 
 from prefect.deployments import Deployment
 from prefect.orion.schemas.schedules import CronSchedule
-from prefect.flow_runners import SubprocessFlowRunner
+from prefect.task_runners import SequentialTaskRunner
 
 Deployment(
     flow=main,
     name="model_training",
     schedule=CronSchedule(cron="0 9 15 * *"),
-    flow_runner=SubprocessFlowRunner(),
+    flow_runner=SequentialTaskRunner(),
 )
